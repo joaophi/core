@@ -726,6 +726,8 @@ build.json @home-assistant/supervisor
 /tests/components/insteon/ @teharris1
 /homeassistant/components/integration/ @dgomes
 /tests/components/integration/ @dgomes
+/homeassistant/components/intelbras/ @joaophi
+/tests/components/intelbras/ @joaophi
 /homeassistant/components/intellifire/ @jeeftor
 /tests/components/intellifire/ @jeeftor
 /homeassistant/components/intent/ @home-assistant/core @synesthesiam

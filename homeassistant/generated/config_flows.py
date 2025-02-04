@@ -288,6 +288,7 @@ FLOWS = {
         "incomfort",
         "inkbird",
         "insteon",
+        "intelbras",
         "intellifire",
         "iometer",
         "ios",
