@@ -11,10 +11,11 @@ from .protocol import ServidorAMT
 
 PLATFORMS: list[Platform] = [Platform.ALARM_CONTROL_PANEL, Platform.BINARY_SENSOR]
 
-type IntelbrasConfigEnty = ConfigEntry[AMTCoordinator]
 
-
-async def async_setup_entry(hass: HomeAssistant, entry: IntelbrasConfigEnty) -> bool:
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry[AMTCoordinator],
+) -> bool:
     """Set up Alarme Intelbras from a config entry."""
 
     servidor = ServidorAMT(
@@ -32,6 +33,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: IntelbrasConfigEnty) -> 
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: IntelbrasConfigEnty) -> bool:
+async def async_unload_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry[AMTCoordinator],
+) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)

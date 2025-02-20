@@ -2,31 +2,35 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from . import IntelbrasConfigEnty
 from .const import DOMAIN
 from .coordinator import AMTCoordinator
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    config_entry: IntelbrasConfigEnty,
-    async_add_entities: AddEntitiesCallback,
-):
+    config_entry: ConfigEntry[AMTCoordinator],
+    async_add_entities: AddConfigEntryEntitiesCallback,
+) -> None:
     """Set up entry."""
     async_add_entities([AMTEnergySensor(config_entry.runtime_data)])
-    async_add_entities([AMTOpenSensor(config_entry.runtime_data, i) for i in range(24)])
-    async_add_entities(
-        [AMTBatterySensor(config_entry.runtime_data, i) for i in range(24)]
-    )
+    for i in range(len(config_entry.runtime_data.data["status"]["zones"])):
+        if config_entry.runtime_data.data["status"]["zones"][i]["enabled"]:
+            async_add_entities(
+                [
+                    AMTOpenSensor(config_entry.runtime_data, i),
+                    AMTBatterySensor(config_entry.runtime_data, i),
+                ]
+            )
 
 
 class AMTEnergySensor(CoordinatorEntity[AMTCoordinator], BinarySensorEntity):
-    def __init__(self, coordinator: AMTCoordinator):
+    def __init__(self, coordinator: AMTCoordinator) -> None:
         CoordinatorEntity.__init__(self, coordinator)
         self._attr_unique_id = coordinator.servidor.mac.hex("_") + "_energy"
         self._attr_device_info = DeviceInfo(
@@ -47,7 +51,7 @@ class AMTEnergySensor(CoordinatorEntity[AMTCoordinator], BinarySensorEntity):
 
 
 class AMTOpenSensor(CoordinatorEntity[AMTCoordinator], BinarySensorEntity):
-    def __init__(self, coordinator: AMTCoordinator, index: int):
+    def __init__(self, coordinator: AMTCoordinator, index: int) -> None:
         CoordinatorEntity.__init__(self, coordinator, context=index)
         self._index = index
         self._attr_unique_id = (
@@ -81,7 +85,7 @@ class AMTOpenSensor(CoordinatorEntity[AMTCoordinator], BinarySensorEntity):
 
 
 class AMTBatterySensor(CoordinatorEntity[AMTCoordinator], BinarySensorEntity):
-    def __init__(self, coordinator: AMTCoordinator, index: int):
+    def __init__(self, coordinator: AMTCoordinator, index: int) -> None:
         CoordinatorEntity.__init__(self, coordinator, context=index)
         self._index = index
         self._attr_unique_id = (
