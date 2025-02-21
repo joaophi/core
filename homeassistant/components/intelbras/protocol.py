@@ -287,8 +287,8 @@ async def send_command(
     await writer.drain()
 
 
-class ServidorAMT:
-    def __init__(self, host, port, mac, pin):
+class ClientAMT:
+    def __init__(self, host: str, port: int, mac: str, pin: str) -> None:
         self.host = host
         self.port = port
         self.mac = bytes.fromhex(mac.replace(":", ""))

@@ -6,9 +6,9 @@ from datetime import timedelta
 import logging
 
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .protocol import SYNC_NAME, SYNC_USER, SYNC_ZONE, ServidorAMT
+from .protocol import SYNC_NAME, SYNC_USER, SYNC_ZONE, ClientAMT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class AMTCoordinator(DataUpdateCoordinator):
     def __init__(
         self,
         hass: HomeAssistant,
-        servidor: ServidorAMT,
+        client: ClientAMT,
     ) -> None:
         super().__init__(
             hass,
@@ -26,7 +26,7 @@ class AMTCoordinator(DataUpdateCoordinator):
             update_interval=timedelta(seconds=5),
             always_update=True,
         )
-        self.servidor = servidor
+        self.servidor = client
         self.__messages = {}
 
     async def _async_setup(self) -> None:
@@ -51,7 +51,10 @@ class AMTCoordinator(DataUpdateCoordinator):
             self.__messages["users"].extend(data)
 
     async def _async_update_data(self):
-        data = await self.servidor.status()
+        try:
+            data = await self.servidor.status()
+        except Exception as ex:
+            raise UpdateFailed("Erro ao atualizar os dados") from ex
         return {
             "status": data,
             "messages": self.__messages,

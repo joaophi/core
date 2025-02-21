@@ -12,7 +12,7 @@ from homeassistant.const import CONF_HOST, CONF_MAC, CONF_PIN, CONF_PORT
 from homeassistant.helpers.device_registry import format_mac
 
 from .const import DOMAIN
-from .protocol import ServidorAMT
+from .protocol import ClientAMT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            connection = ServidorAMT(
+            connection = ClientAMT(
                 user_input[CONF_HOST],
                 user_input[CONF_PORT],
                 user_input[CONF_MAC],

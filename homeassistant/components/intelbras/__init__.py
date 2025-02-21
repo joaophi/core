@@ -7,7 +7,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
 from .coordinator import AMTCoordinator
-from .protocol import ServidorAMT
+from .protocol import ClientAMT
 
 PLATFORMS: list[Platform] = [Platform.ALARM_CONTROL_PANEL, Platform.BINARY_SENSOR]
 
@@ -18,13 +18,13 @@ async def async_setup_entry(
 ) -> bool:
     """Set up Alarme Intelbras from a config entry."""
 
-    servidor = ServidorAMT(
+    client = ClientAMT(
         entry.data["host"],
         entry.data["port"],
         entry.data["mac"],
         entry.data["pin"],
     )
-    entry.runtime_data = AMTCoordinator(hass, servidor)
+    entry.runtime_data = AMTCoordinator(hass, client)
 
     await entry.runtime_data.async_config_entry_first_refresh()
 
